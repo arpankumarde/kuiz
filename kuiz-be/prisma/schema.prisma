@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  password  String
+  quizzes   Quiz[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  id              String        @id @default(cuid())
+  email           String        @unique
+  name            String?
+  password        String
+  passwordChanged Boolean       @default(false)
+  quizAttempts    QuizAttempt[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model Quiz {
+  id           String        @id @default(cuid())
+  title        String
+  description  String?
+  adminId      String
+  admin        Admin         @relation(fields: [adminId], references: [id])
+  questions    Question[]
+  quizAttempts QuizAttempt[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Question {
+  id         String     @id @default(cuid())
+  text       String
+  difficulty Difficulty
+  options    Json?
+  answer     Int?
+  quizId     String
+  quiz       Quiz       @relation(fields: [quizId], references: [id])
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@index([quizId])
+}
+
+model QuizAttempt {
+  id          String   @id @default(cuid())
+  userId      String
+  quizId      String
+  score       Int
+  attemptedAt DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
+  quiz        Quiz     @relation(fields: [quizId], references: [id])
+
+  @@unique([userId, quizId])
+  @@index([quizId])
+  @@index([userId])
+}
