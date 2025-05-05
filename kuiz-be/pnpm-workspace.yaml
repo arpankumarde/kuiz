@@ -3,3 +3,5 @@ onlyBuiltDependencies:
   - '@prisma/engines'
   - esbuild
   - prisma
+  - puppeteer
+  - vue-demi
