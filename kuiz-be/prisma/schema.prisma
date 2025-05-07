@@ -57,8 +57,8 @@ model Question {
   id         String     @id @default(cuid())
   text       String
   difficulty Difficulty
-  options    Json?
-  answer     Int?
+  options    String[]
+  answer     Int
   quizId     String
   quiz       Quiz       @relation(fields: [quizId], references: [id])
   createdAt  DateTime   @default(now())
