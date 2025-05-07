@@ -21,17 +21,17 @@ const data = {
   menuOptions: [
     {
       name: "Dashboard",
-      url: "/dashboard",
+      url: "/admin/dashboard",
       icon: Frame,
     },
     {
       name: "Quizzes",
-      url: "/dashboard/quiz",
+      url: "/admin/quiz",
       icon: MessageCircleQuestion,
     },
     {
-      name: "User",
-      url: "/dashboard/user",
+      name: "Users",
+      url: "/admin/users",
       icon: User,
     },
   ],

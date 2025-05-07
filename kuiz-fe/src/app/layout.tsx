@@ -15,6 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Kuiz",
+  icons: "/brand/logo.png",
 };
 
 export default function RootLayout({
