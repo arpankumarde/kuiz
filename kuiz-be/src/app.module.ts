@@ -3,9 +3,9 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DbModule } from './db/db.module';
-import { AdminModule } from './admin/admin.module';
+import { AdminModule } from './resource/admin/admin.module';
 import { JwtModule } from '@nestjs/jwt';
-import { UserModule } from './user/user.module';
+import { UserModule } from './resource/user/user.module';
 
 @Module({
   imports: [

@@ -3,6 +3,8 @@ import { JwtService } from '@nestjs/jwt';
 import { DbService } from 'src/db/db.service';
 import { Prisma } from 'generated/prisma';
 import * as bcrypt from 'bcryptjs';
+import { JwtPayload } from 'src/types/payload';
+import { Role } from 'src/enum/role.enum';
 
 @Injectable()
 export class AdminService {
@@ -26,7 +28,7 @@ export class AdminService {
       data: { ...createAdminDto, password: hashedPassword },
     });
 
-    const payload = { sub: user.id, type: 'ADMIN' };
+    const payload: JwtPayload = { sub: user.id, type: Role.ADMIN };
     return { user, accessToken: this.jwtService.sign(payload) };
   }
 
@@ -38,7 +40,7 @@ export class AdminService {
     }
 
     if (await this.verifyPassword(password, user?.password)) {
-      const payload = { sub: user.id, type: 'ADMIN' };
+      const payload: JwtPayload = { sub: user.id, type: Role.ADMIN };
       return { user, accessToken: this.jwtService.sign(payload) };
     } else {
       throw new UnauthorizedException('Invalid credentials');
