@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { Prisma } from 'generated/prisma';
 import { DbService } from 'src/db/db.service';
+import { Role } from 'src/enum/role.enum';
 import { JwtPayload } from 'src/types/payload';
 import { UserQuizAttemptInput } from 'src/types/quiz';
 
@@ -19,7 +20,31 @@ export class QuizService {
     });
   }
 
-  async findAll() {
+  async findAll(user: JwtPayload) {
+    if (user?.type === Role.ADMIN) {
+      return this.db.quiz.findMany({
+        include: {
+          _count: {
+            select: { questions: true },
+          },
+        },
+      });
+    } else if (user?.type === Role.USER) {
+      const data = await this.db.quiz.findMany({
+        include: {
+          _count: {
+            select: { questions: true },
+          },
+          quizAttempts: {
+            where: { userId: user.sub },
+          },
+        },
+      });
+
+      // return data with quizzes with 10 questions
+      return data.filter((quiz) => quiz._count.questions >= 10);
+    }
+
     return this.db.quiz.findMany({
       include: {
         _count: {
@@ -93,7 +118,7 @@ export class QuizService {
       },
     });
     if (quizAttempt) {
-      throw new Error('You can only attempt a quiz once');
+      throw new ForbiddenException('You can only attempt a quiz once');
     }
 
     // get quiz questions

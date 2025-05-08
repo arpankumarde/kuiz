@@ -33,8 +33,8 @@ export class QuizController {
   }
 
   @Get()
-  findAll() {
-    return this.quizService.findAll();
+  findAll(@Req() request: Request) {
+    return this.quizService.findAll(request['user'] as JwtPayload);
   }
 
   @Get(':id')
