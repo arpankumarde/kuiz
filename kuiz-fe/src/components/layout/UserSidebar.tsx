@@ -21,18 +21,13 @@ const data = {
   menuOptions: [
     {
       name: "Dashboard",
-      url: "/dashboard",
+      url: "/user/dashboard",
       icon: Frame,
     },
     {
       name: "Quizzes",
-      url: "/dashboard/quiz",
+      url: "/user/quiz",
       icon: MessageCircleQuestion,
-    },
-    {
-      name: "Quiz Results",
-      url: "/dashboard/quiz-results",
-      icon: PieChart,
     },
   ],
 };

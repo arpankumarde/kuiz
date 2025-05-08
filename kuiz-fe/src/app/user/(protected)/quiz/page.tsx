@@ -19,9 +19,9 @@ import { Quiz, QuizAttempt } from "@/generated/prisma";
 
 interface ExtendedQuiz extends Quiz {
   _count: {
-    Question: number;
+    questions: number;
   };
-  QuizAttempt?: QuizAttempt[];
+  quizAttempts?: QuizAttempt[];
 }
 
 const Page = () => {
@@ -37,7 +37,8 @@ const Page = () => {
     setLoading(true);
     setError(null);
     try {
-      const { data } = await api.get<ExtendedQuiz[]>("/user/quizzes");
+      const { data } = await api.get<ExtendedQuiz[]>("/quiz");
+      console.log("Fetched quizzes:", data);
       setQuizzes(data);
     } catch (err: any) {
       console.error("Error fetching quizzes:", err);
@@ -49,7 +50,7 @@ const Page = () => {
   };
 
   const hasAttempted = (quiz: ExtendedQuiz) => {
-    return quiz.QuizAttempt && quiz.QuizAttempt.length > 0;
+    return quiz.quizAttempts && quiz.quizAttempts.length > 0;
   };
 
   if (loading) {
@@ -96,12 +97,15 @@ const Page = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {quizzes.map((quiz) => (
-            <Card key={quiz.id} className="overflow-hidden border-0 shadow-md">
-              <CardHeader className="bg-slate-50 dark:bg-slate-900/50 pb-3">
+            <Card
+              key={quiz.id}
+              className="overflow-hidden border-0 shadow-md pt-0"
+            >
+              <CardHeader className="bg-indigo-100 dark:bg-slate-900/50 py-3">
                 <CardTitle className="text-xl">{quiz.title}</CardTitle>
                 <CardDescription>
-                  {quiz._count.Question} question
-                  {quiz._count.Question !== 1 ? "s" : ""}
+                  {quiz._count.questions} question
+                  {quiz._count.questions !== 1 ? "s" : ""}
                 </CardDescription>
               </CardHeader>
               <CardContent className="pt-4">
@@ -123,23 +127,24 @@ const Page = () => {
                 )}
               </CardContent>
               <CardFooter className="flex justify-between">
-                <Button
-                  asChild
-                  variant={hasAttempted(quiz) ? "outline" : "default"}
-                >
-                  <Link href={`/user/quiz/${quiz.id}`}>
-                    {hasAttempted(quiz) ? "Attempt Again" : "Start Quiz"}
-                  </Link>
-                </Button>
+                {hasAttempted(quiz) ? (
+                  <div className="text-sm font-medium">
+                    Score: {quiz.quizAttempts![0].score}/10
+                  </div>
+                ) : (
+                  <Button asChild variant="default">
+                    <Link href={`/user/quiz/${quiz.id}`}>Start Quiz</Link>
+                  </Button>
+                )}
 
                 {hasAttempted(quiz) && (
                   <Button variant="ghost" asChild>
                     <Link
-                      href={`/user/quiz/${quiz.id}/results`}
+                      href={`/user/quiz/${quiz.id}/leaderboard`}
                       className="flex items-center"
                     >
                       <BarChart3 className="mr-1 h-4 w-4" />
-                      Results
+                      Leaderboard
                     </Link>
                   </Button>
                 )}
