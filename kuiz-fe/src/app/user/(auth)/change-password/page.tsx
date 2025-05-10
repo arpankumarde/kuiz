@@ -73,7 +73,9 @@ const Page = () => {
 
       if (data.passwordChanged) {
         // Store the state token as session token
-        localStorage.setItem("__session_token", formData.state);
+        if (typeof window !== "undefined") {
+          localStorage.setItem("__session_token", formData.state);
+        }
         toast.success("Password changed successfully!");
         router.push("/user/dashboard");
       } else {
